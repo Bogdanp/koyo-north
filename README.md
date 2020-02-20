@@ -10,3 +10,6 @@ applies migrations when started.
 ## License
 
     koyo-north is licensed under the 3-Clause BSD license.
+
+[north]: https://docs.racket-lang.org/north/index.html?q=north
+[koyo]: https://koyoweb.org
