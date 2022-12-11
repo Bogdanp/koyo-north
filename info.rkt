@@ -1,10 +1,11 @@
 #lang info
 
-(define version "0.0.0")
+(define license 'BSD-3-Clause)
+(define version "0.5")
 (define collection "koyo")
 (define deps '("base"
                "component-lib"
                "db-lib"
                "koyo-lib"
-               "north"))
+               ["north" #:version "0.5"]))
 (define build-deps '())
