@@ -7,12 +7,13 @@
          north/adapter/base
          north/adapter/postgres
          north/adapter/sqlite
-         racket/contract
+         racket/contract/base
          racket/match)
 
 (provide
  migrator?
- make-migrator-factory)
+ (contract-out
+  [make-migrator-factory (-> path? (-> database? migrator?))]))
 
 (struct migrator (path db)
   #:transparent
@@ -24,8 +25,7 @@
    (define (component-stop m)
      (struct-copy migrator m [db #f]))])
 
-(define/contract ((make-migrator-factory path) db)
-  (-> path? (-> database? migrator?))
+(define ((make-migrator-factory path) db)
   (unless (directory-exists? path)
     (error 'make-migrator "migrations path does not exist: ~a" path))
   (migrator path db))
