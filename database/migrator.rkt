@@ -1,12 +1,12 @@
 #lang racket/base
 
 (require component
-         db
          koyo/database
-         north
-         north/adapter/base
-         north/adapter/postgres
-         north/adapter/sqlite
+         (only-in north/adapter/base
+                  exn:fail:adapter-cause
+                  exn:fail:adapter:migration-revision
+                  exn:fail:adapter:migration?)
+         (prefix-in north: north/migrate)
          racket/contract/base
          racket/match)
 
@@ -40,15 +40,4 @@
                             (exn-message (exn:fail:adapter-cause e))))])
     (call-with-database-connection db
       (lambda (conn)
-        (define base (path->migration path))
-        (define adapter
-          (match (dbsystem-name (connection-dbsystem conn))
-            ['sqlite3 (sqlite-adapter conn)]
-            ['postgresql (postgres-adapter conn)]
-            [name (error 'migrate "db system not supported: ~a" name)]))
-
-        (adapter-init adapter)
-        (define current (adapter-current-revision adapter))
-        (define target (migration-revision (migration-most-recent base)))
-        (for ([migration (in-list (migration-plan base current target))])
-          (adapter-apply! adapter (migration-revision migration) (migration-up migration)))))))
+        (north:migrate conn path)))))
